@@ -27,11 +27,10 @@ class ChargePoint(cp):
 
 
 async def main():
-    async for i in ["1", "2", "3"]:
-        async with websockets.connect('ws://localhost:9000/CP_'+i, subprotocols=['ocpp1.6']) as ws:
-            cp = ChargePoint('CP_'+i, ws)
-            # when the charge point is started it is waiting for messages
-            await asyncio.gather(cp.start(), cp.send_boot_notification())
+    async with websockets.connect('ws://localhost:9000/CP_1', subprotocols=['ocpp1.6']) as ws:
+        cp = ChargePoint('CP_1', ws)
+        # when the charge point is started it is waiting for messages
+        await asyncio.gather(cp.start(), cp.send_boot_notification())
 
 
 if __name__ == '__main__':
