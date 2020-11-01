@@ -1,12 +1,10 @@
 import asyncio
 import websockets
-import sys
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
-sys.path.append("/home/ole/projects/charging_management")
-from electric_vehicle import ElectricVehicle
-import clock
+from chargesim.electric_vehicle import ElectricVehicle
+from chargesim import clock
 
 # for management:
 # ChangeAvailability

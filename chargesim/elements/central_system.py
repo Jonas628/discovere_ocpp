@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import json
 from pathlib import Path
-from datetime import datetime
+from clock import timestamp
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16.enums import Action, RegistrationStatus

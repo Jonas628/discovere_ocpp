@@ -36,6 +36,18 @@ def timestamp():
     return f"{_year}-{_month}-{day}::{hours}:{minutes}:{seconds}"
 
 
+def hours():
+    return math.floor((simtime % 86400)/3600)
+
+
+def minutes():
+    return math.floor(((simtime % 86400) % 3600)/60)
+
+
+def seconds():
+    return math.floor(((simtime % 86400) % 3600) % 60)
+
+
 loop = asyncio.get_event_loop()
 # run in background - None defaults to current loop executor
 loop.run_in_executor(None, clock)
