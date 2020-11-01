@@ -3,7 +3,6 @@ Daten aus MongoDB auslesen um den Verbrauch in einem bestimmten interval
 zu
 """
 
-import pymongo
 from pymongo import MongoClient
 
 cluster = MongoClient(host="35.156.7.227", port=27017, username="admin",

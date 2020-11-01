@@ -5,23 +5,23 @@ with open('README.md') as f:
     readme = f.read()
 
 # extract version
-with open('freefield/__init__.py') as file:
+with open('chargesim/__init__.py') as file:
     for line in file.readlines():
         m = re.match("__version__ *= *['\"](.*)['\"]", line)
         if m:
             version = m.group(1)
 
-setup(name='freefield',
+setup(name='chargesim',
       version=version,
-      description='Toolbox for Experiments on Spatial Hearing.',
+      description='Simulation for Smart Charging.',
       long_description=readme,
       long_description_content_type='text/markdown',
-      url='https://github.com/OleBialas/freefield_toolbox.git',
+      url='https://github.com/OleBialas/chargesim.git',
       author='Ole Bialas',
       author_email='bialas@cbs.mpg.de',
       license='MIT',
       python_requires='>=3.6',
-      install_requires=['numpy', 'matplotlib', 'slab'],
+      install_requires=['websockets', 'ocpp', 'pymongo'],
       packages=find_packages(),
       package_data={'freefield': ['data/*.txt', 'data/*.wav', 'data/rcx/*']},
       include_package_data=True,
