@@ -1,11 +1,6 @@
 import random
 import asyncio
-import os
-
-try:
-    TIMELAPSE = int(os.environ["TIMELAPSE"])
-except KeyError:
-    TIMELAPSE = 1
+import clock
 
 
 class ElectricVehicle(object):
@@ -26,21 +21,26 @@ class ElectricVehicle(object):
 
     async def drive(self):
         print("start driving...")
-        distance = random.randint(1, 10)  # distance to drive in km
+        start = clock.simtime
+        duration = random.randint(1, 10)
+        distance = duration * random.randint(25, 50)  # distance to drive in km
         # duration in seconds when driving the distance witrh 50 km/h
         duration = int((distance / 50) * 3600)
         energy_consumed = distance * self.consumption
         self.soc -= energy_consumed
         if not self.soc > 0:
             print("The car has died...")
-        await asyncio.sleep(duration/TIMELAPSE)
+        while clock.simtime - start < duration:
+            await asyncio.sleep(0.01)
         print(f"drove for {duration} seconds.")
 
     async def sleep(self):
         print("sleeping...")
         # sleep between a minute and an hour
+        start = clock.simtime
         duration = random.randint(60, 3600)
-        await asyncio.sleep(duration/TIMELAPSE)
+        while clock.simtime - start < duration:
+            await asyncio.sleep(0.01)
         print("slept ")
 
     async def charge(self):

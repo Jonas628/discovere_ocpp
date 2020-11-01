@@ -1,10 +1,14 @@
 import asyncio
 import websockets
+import json
+from pathlib import Path
 from datetime import datetime
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
+
+DATADIR = Path("/home/ole/projects/charging_management/data/")
 
 
 class MyChargePoint(cp):
@@ -29,6 +33,9 @@ class MyChargePoint(cp):
     @on(Action.MeterValues)
     async def on_meter_value(self, connector_id, meter_value):
         print(meter_value)
+        fname = meter_value[0]['timestamp']
+        with open(DATADIR/fname, 'w') as outfile:
+            json.dump(meter_value[0], outfile)
         return call_result.MeterValuesPayload()
 
 

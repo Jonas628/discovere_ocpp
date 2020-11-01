@@ -1,24 +1,17 @@
 import asyncio
 import websockets
 import sys
-import os
-from datetime import datetime
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
-sys.path.append("/home/bialas/projects/charging_management")
+sys.path.append("/home/ole/projects/charging_management")
 from electric_vehicle import ElectricVehicle
-
-try:
-    TIMELAPSE = int(os.environ["TIMELAPSE"])
-except KeyError:
-    TIMELAPSE = 1
+import clock
 
 # for management:
 # ChangeAvailability
 # SetChargingProfile / GetCompositeSchedule--> start, stop time
-# ChangeConfiguration / GetConfiguration --> how long is this viable, what can we set?
-
+# ChangeConfiguration / GetConfiguration --> how long is this viable?
 # SetChargingProfile seems like the appropriate thing
 # RemoteStart/RemoteStart --> interrupt charging
 
@@ -54,31 +47,40 @@ class ChargePoint(cp):
         request = call.MeterValuesPayload(
             connector_id=1,
             meter_value=[{
-                "timestamp": datetime.utcnow().isoformat(),
-                "sampledValue": [{
-                    "measurand": "Power.Active.Export",
-                    "phase": "N",
-                    "unit": "kW",
-                    "value": f"{self.maxpower}"}]
-            }]
-        )
+                "timestamp": clock.timestamp(),
+                "sampledValue": [
+                    {"measurand": "Power.Active.Import",
+                     "phase": "N",
+                     "unit": "kW",
+                     "value": str(self.maxpower)},
+                    {"measurand": "Energy.Active.Import.Register",
+                     "phase": "N",
+                     "unit": "kWh",
+                     "value": "0.00"}]}])
+
         await self.call(request)
 
     async def charge(self, car):
+        transaction_start = clock.simtime
         while car.soc < car.capacity*0.9:
-            car.soc += 10*self.maxpower
+            await asyncio.sleep(1)
+            elapsed = clock.simtime - transaction_start
+            if elapsed < 0:
+                elapsed = 1
+            car.soc += elapsed*self.maxpower
             await self.send_meter_value()
-            await asyncio.sleep(10/TIMELAPSE)
 
 
 async def main(hostname: str, port: int) -> None:
     websocket_resource_url = f"ws://{hostname}:{port}"
     # open the connection with a websocket
-    async with websockets.connect(websocket_resource_url, subprotocols=['ocpp1.6']) as websocket:
+    async with websockets.connect(websocket_resource_url,
+                                  subprotocols=['ocpp1.6']) as websocket:
         cp = ChargePoint('CP_1', websocket)
         ev = ElectricVehicle(cp)
         # when the charge point is started it is waiting for messages
-        await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats(), ev.run())
+        await asyncio.gather(cp.start(), cp.send_boot_notification(),
+                             cp.send_heartbeats(), ev.run())
 
 
 if __name__ == '__main__':
