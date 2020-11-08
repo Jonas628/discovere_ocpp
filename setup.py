@@ -5,7 +5,7 @@ with open('README.md') as f:
     readme = f.read()
 
 # extract version
-with open('chargesim/__init__.py') as file:
+with open('chargesim/src/__init__.py') as file:
     for line in file.readlines():
         m = re.match("__version__ *= *['\"](.*)['\"]", line)
         if m:

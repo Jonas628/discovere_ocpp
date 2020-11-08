@@ -3,8 +3,9 @@ import websockets
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
-from chargesim.electric_vehicle import ElectricVehicle
-from chargesim import clock
+from src import ElectricVehicle
+import clock
+
 
 # for management:
 # ChangeAvailability

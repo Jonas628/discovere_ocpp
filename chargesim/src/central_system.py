@@ -2,14 +2,15 @@ import asyncio
 import websockets
 import json
 from pathlib import Path
-from clock import timestamp
+import clock
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
+import mongoengine
 
 DATADIR = Path("/home/ole/projects/charging_management/data/")
-
+mongoengine.register_connection(alias='core', name='ocpp')
 
 class MyChargePoint(cp):
     """
@@ -20,15 +21,15 @@ class MyChargePoint(cp):
                              charge_point_model, **kwargs):
         print("ChargePoint Connected!")
         return call_result.BootNotificationPayload(
-            current_time=datetime.utcnow().isoformat(),
+            current_time=clock.timestamp(),
             interval=10,
             status=RegistrationStatus.accepted)
 
     @on(Action.Heartbeat)
     async def on_heartbeat(self):
-        timestamp = datetime.utcnow()
-        print(f"received Heartbeat at {timestamp.hour}:{timestamp.minute}:{timestamp.second}")
-        return call_result.HeartbeatPayload(current_time=str(timestamp))
+        print("received Heartbeat at: \n"
+              f"{clock.hours}:{clock.minutes}:{clock.seconds}")
+        return call_result.HeartbeatPayload(current_time=clock.timestamp())
 
     @on(Action.MeterValues)
     async def on_meter_value(self, connector_id, meter_value):
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     # and delegates to the connection handler defined by ws_handler.
     # Once the handler completes, either normally or with an exception,
     # the server performs the closing handshake and closes the connection
-    start_server = websockets.serve(server.ws_handler, "localhost", 3000, subprotocols=['ocpp1.6'])
+    start_server = websockets.serve(server.ws_handler, "localhost", 3000)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(start_server)
     loop.run_forever()
