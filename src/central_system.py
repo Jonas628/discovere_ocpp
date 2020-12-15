@@ -6,10 +6,8 @@ from ocpp.routing import on
 from ocpp.v16 import ChargePoint as Cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
-import mongoengine
 
 DATADIR = Path("/home/ole/projects/charging_management/data/")
-mongoengine.register_connection(alias='core', name='OCPP')
 
 
 class MyChargePoint(Cp):
@@ -57,7 +55,8 @@ if __name__ == '__main__':
     # and delegates to the connection handler defined by ws_handler.
     # Once the handler completes, either normally or with an exception,
     # the server performs the closing handshake and closes the connection
-    start_server = websockets.serve(server.ws_handler, "localhost", 3000)
+    start_server = websockets.serve(server.ws_handler, "localhost", 3001)
+    print("### starting the central system ###")
     loop = asyncio.get_event_loop()
     loop.run_until_complete(start_server)
     loop.run_forever()

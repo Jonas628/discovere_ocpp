@@ -65,5 +65,5 @@ if __name__ == '__main__':
     # specify host and port and run forever, will raise an error if the
     # server is not found
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(hostname='localhost', port=3000))
+    loop.run_until_complete(main(hostname='localhost', port=3001))
     loop.run_forever()
