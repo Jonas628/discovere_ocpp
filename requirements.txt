@@ -1,6 +1,2 @@
-websockets~=8.1
-ocpp~=0.7.2
-setuptools~=50.3.0
-mongoengine~=0.20.0
-chargesim~=0.1
-pymongo~=3.11.0
+websockets
+ocpp
