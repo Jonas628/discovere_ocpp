@@ -24,7 +24,6 @@ class MyChargePoint(Cp):
 
     @on(Action.Heartbeat)
     async def on_heartbeat(self):
-        print(f"received Heartbeat at: {datetime.utcnow()}")
         return call_result.HeartbeatPayload(current_time=str(datetime.utcnow()))
 
     @on(Action.MeterValues)
@@ -40,8 +39,11 @@ class CentralSystem(object):
         self.clients = []  # all currently connected charging_points
 
     async def register(self, websocket):
-        charge_point_id = "CP01"
-        print(f"New charge point {charge_point_id} registered!")
+        charge_point_nr = len(self.clients)
+        if charge_point_nr < 10:
+            charge_point_id = f"CP0{charge_point_nr}"
+        else:
+            charge_point_id = f"CP{charge_point_nr}"
         self.clients.append(MyChargePoint(charge_point_id, websocket))
         await asyncio.gather(self.clients[-1].start())
 
