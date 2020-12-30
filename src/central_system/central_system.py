@@ -1,13 +1,10 @@
 import asyncio
 import websockets
 from datetime import datetime
-from pathlib import Path
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as Cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
-
-DATADIR = Path("/home/ole/projects/charging_management/data/")
 
 
 class MyChargePoint(Cp):

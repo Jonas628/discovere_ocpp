@@ -4,7 +4,7 @@ from datetime import datetime
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
-
+import time
 
 class ChargePoint(cp):
     """
@@ -29,9 +29,11 @@ class ChargePoint(cp):
 
     async def send_heartbeats(self):
         while True:
+            tic = time.time()
             request = call.HeartbeatPayload()
             await self.call(request)
-            await asyncio.sleep(10)
+            await asyncio.sleep(1)
+            print(f"ping: {time.time() - tic}")
 
     async def send_meter_value(self, power, cid=1, tid=1):
         request = call.MeterValuesPayload(
@@ -65,5 +67,5 @@ if __name__ == '__main__':
     # specify host and port and run forever, will raise an error if the
     # server is not found
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(hostname="0.0.0.0", port=8000))
+    loop.run_until_complete(main(hostname="ec2-18-192-214-51.eu-central-1.compute.amazonaws.com", port=8000))
     loop.run_forever()
