@@ -5,6 +5,18 @@ from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
 import time
+import os
+try:
+    HOSTNAME = os.environ["HOSTNAME"]
+except KeyError:
+    print("$HOSTNAME not found, set to '0.0.0.0'")
+    HOSTNAME = "0.0.0.0"
+try:
+    PORT = os.environ["PORT"]
+except KeyError:
+    print("PORT not found, set to 8000")
+    PORT = 8000
+
 
 class ChargePoint(cp):
     """
@@ -67,5 +79,5 @@ if __name__ == '__main__':
     # specify host and port and run forever, will raise an error if the
     # server is not found
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(hostname="ec2-18-192-214-51.eu-central-1.compute.amazonaws.com", port=8000))
+    loop.run_until_complete(main(hostname=HOSTNAME, port=PORT))
     loop.run_forever()
