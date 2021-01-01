@@ -6,16 +6,7 @@ from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
 import time
 import os
-try:
-    HOSTNAME = os.environ["HOSTNAME"]
-except KeyError:
-    print("$HOSTNAME not found, set to '0.0.0.0'")
-    HOSTNAME = "0.0.0.0"
-try:
-    PORT = os.environ["PORT"]
-except KeyError:
-    print("PORT not found, set to 8000")
-    PORT = 8000
+from electric_vehicle import ElectricVehicle
 
 
 class ChargePoint(cp):
@@ -28,7 +19,8 @@ class ChargePoint(cp):
 
     def __init__(self, id, connection, response_timeout=30):
         super().__init__(id, connection, response_timeout=response_timeout)
-        self.maxpower = float(11)
+        self.power = float(11)
+        self.status = "available"
 
     async def send_boot_notification(self):
         request = call.BootNotificationPayload(
@@ -47,7 +39,7 @@ class ChargePoint(cp):
             await asyncio.sleep(1)
             print(f"ping: {time.time() - tic}")
 
-    async def send_meter_value(self, power, cid=1, tid=1):
+    async def send_meter_value(self, cid=1, tid=1):
         request = call.MeterValuesPayload(
             connector_id=cid,
             transaction_id=tid,
@@ -57,7 +49,7 @@ class ChargePoint(cp):
                     {"measurand": "Power.Active.Import",
                      "phase": "N",
                      "unit": "kW",
-                     "value": str(power)},
+                     "value": str(self.power)},
                     {"measurand": "Energy.Active.Import.Register",
                      "phase": "N",
                      "unit": "kWh",
@@ -65,19 +57,39 @@ class ChargePoint(cp):
         )
         await self.call(request)
 
+    async def charge(self, car):
+        self.status = "charging"
+        transaction_start = time.time()
+        while car.soc < car.capacity*0.9:
+            await asyncio.sleep(0.01)
+            elapsed = 0.01 * car.timelapse
+            car.soc += elapsed*self.power
+            await self.send_meter_value()
+        self.status = "available"
+
 
 async def main(hostname: str, port: int) -> None:
     websocket_resource_url = f"ws://{hostname}:{port}"
     # open the connection with a websocket
     async with websockets.connect(websocket_resource_url) as websocket:
         cp = ChargePoint('CP_1', websocket)
+        ev = ElectricVehicle(cp)
         # when the charge point is started it is waiting for messages
-        await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats())
+        await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats(), ev.run())
 
 
 if __name__ == '__main__':
-    # specify host and port and run forever, will raise an error if the
-    # server is not found
+    try:
+        HOSTNAME = os.environ["HOSTNAME"]
+    except KeyError:
+        print("$HOSTNAME not found, set to '0.0.0.0'")
+        HOSTNAME = "0.0.0.0"
+    try:
+        PORT = os.environ["PORT"]
+    except KeyError:
+        print("PORT not found, set to 8000")
+        PORT = 8000
+    # specify host and port and run forever, will raise an error if the server is not found
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main(hostname=HOSTNAME, port=PORT))
     loop.run_forever()

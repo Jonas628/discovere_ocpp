@@ -2,11 +2,6 @@ import random
 import asyncio
 import time
 import os
-try:
-    TIMELAPSE = os.environ["TIMELAPSE"]
-except KeyError:
-    print("$TIMELAPSE not defined, set to 1...")
-    TIMELAPSE = 1
 
 
 class ElectricVehicle(object):
@@ -17,6 +12,11 @@ class ElectricVehicle(object):
         self.capacity = random.randint(30 * 3600, 80 * 3600)  # in kWs
         self.soc = int(random.random()*self.capacity)  # initial soc
         self.consumption = random.randint(15 * 36, 25 * 36)  # in kWs/km
+        try:
+            self.timelapse = os.environ["TIMELAPSE"]
+        except KeyError:
+            print("$TIMELAPSE not defined, set to 1...")
+            self.timelapse = 1
 
     async def run(self):
         while True:
@@ -30,7 +30,7 @@ class ElectricVehicle(object):
         start = time.time()
         duration = random.randint(1, 10)
         distance = duration * random.randint(25, 50)  # distance to drive in km
-        duration = int((distance / 50) * 3600) / TIMELAPSE  # duration in seconds when driving with 50 km/h
+        duration = int((distance / 50) * 3600) / self.timelapse  # duration in seconds when driving with 50 km/h
         energy_consumed = distance * self.consumption
         self.soc -= energy_consumed
         if not self.soc > 0:
@@ -43,7 +43,7 @@ class ElectricVehicle(object):
         print("sleeping...")
         # sleep between a minute and an hour
         start = time.time()
-        duration = random.randint(60, 3600) / TIMELAPSE
+        duration = random.randint(60, 3600) / self.timelapse
         while time.time() - start < duration:
             await asyncio.sleep(0.01)
         print(f"slept {duration} seconds")
