@@ -23,7 +23,7 @@ class ChargePoint(cp):
 
     async def send_boot_notification(self):
         request = call.BootNotificationPayload(
-            charge_point_model="Weeyu",
+            charge_point_model="Wallbox",
             charge_point_vendor="Discovere"
         )
         response = await self.call(request)
@@ -70,9 +70,9 @@ async def main(hostname, port, charge_point_id="CP_1"):
     # open the connection with a websocket
     async with websockets.connect(websocket_resource_url) as websocket:
         cp = ChargePoint(charge_point_id, websocket)
-        # ev = ElectricVehicle(cp)
         # when the charge point is started it is waiting for messages
         await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats())
+        # ev = ElectricVehicle(cp)
         # await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats(), ev.run())
 
 
