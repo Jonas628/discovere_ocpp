@@ -5,7 +5,6 @@ from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
 import time
-import os
 from electric_vehicle import ElectricVehicle
 
 
@@ -33,11 +32,9 @@ class ChargePoint(cp):
 
     async def send_heartbeats(self):
         while True:
-            tic = time.time()
             request = call.HeartbeatPayload()
             await self.call(request)
             await asyncio.sleep(1)
-            print(f"ping: {time.time() - tic}")
 
     async def send_meter_value(self, cid=1, tid=1):
         request = call.MeterValuesPayload(
@@ -68,28 +65,19 @@ class ChargePoint(cp):
         self.status = "available"
 
 
-async def main(hostname: str, port: int) -> None:
+async def main(hostname, port, charge_point_id="CP_1"):
     websocket_resource_url = f"ws://{hostname}:{port}"
     # open the connection with a websocket
     async with websockets.connect(websocket_resource_url) as websocket:
-        cp = ChargePoint('CP_1', websocket)
-        ev = ElectricVehicle(cp)
+        cp = ChargePoint(charge_point_id, websocket)
+        # ev = ElectricVehicle(cp)
         # when the charge point is started it is waiting for messages
-        await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats(), ev.run())
+        await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats())
+        # await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats(), ev.run())
 
 
 if __name__ == '__main__':
-    try:
-        HOSTNAME = os.environ["HOSTNAME"]
-    except KeyError:
-        print("$HOSTNAME not found, set to '0.0.0.0'")
-        HOSTNAME = "0.0.0.0"
-    try:
-        PORT = os.environ["PORT"]
-    except KeyError:
-        print("PORT not found, set to 8000")
-        PORT = 8000
     # specify host and port and run forever, will raise an error if the server is not found
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(hostname=HOSTNAME, port=PORT))
+    loop.run_until_complete(main(hostname="0.0.0.0", port=8000))
     loop.run_forever()
