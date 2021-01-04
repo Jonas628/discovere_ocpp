@@ -1,13 +1,11 @@
 import asyncio
 import websockets
 from datetime import datetime
-from pathlib import Path
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as Cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
-
-DATADIR = Path("/home/ole/projects/charging_management/data/")
+from server_protocol import BasicAuthServerProtocol
 
 
 class MyChargePoint(Cp):
@@ -24,7 +22,6 @@ class MyChargePoint(Cp):
 
     @on(Action.Heartbeat)
     async def on_heartbeat(self):
-        print(f"received Heartbeat at: {datetime.utcnow()}")
         return call_result.HeartbeatPayload(current_time=str(datetime.utcnow()))
 
     @on(Action.MeterValues)
@@ -40,11 +37,16 @@ class CentralSystem(object):
         self.clients = []  # all currently connected charging_points
 
     async def register(self, websocket):
-        charge_point_id = "CP01"
+        charge_point_nr = len(self.clients)
+        if charge_point_nr < 10:
+            charge_point_id = f"CP0{charge_point_nr}"
+        else:
+            charge_point_id = f"CP{charge_point_nr}"
         self.clients.append(MyChargePoint(charge_point_id, websocket))
         await asyncio.gather(self.clients[-1].start())
 
     async def ws_handler(self, websocket, uri):
+        print(websocket.extra_headers)
         await self.register(websocket)  # add the client to the list of clients
 
 
@@ -55,8 +57,9 @@ if __name__ == '__main__':
     # and delegates to the connection handler defined by ws_handler.
     # Once the handler completes, either normally or with an exception,
     # the server performs the closing handshake and closes the connection
-    start_server = websockets.serve(server.ws_handler, "localhost", 3001)
-    print("### starting the central system ###")
+    start_server = websockets.serve(server.ws_handler, "0.0.0.0", 8000, create_protocol=BasicAuthServerProtocol)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(start_server)
     loop.run_forever()
+
+
