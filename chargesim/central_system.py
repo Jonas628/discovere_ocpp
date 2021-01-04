@@ -5,6 +5,7 @@ from ocpp.routing import on
 from ocpp.v16 import ChargePoint as Cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
+from server_protocol import BasicAuthServerProtocol
 
 
 class MyChargePoint(Cp):
@@ -45,6 +46,7 @@ class CentralSystem(object):
         await asyncio.gather(self.clients[-1].start())
 
     async def ws_handler(self, websocket, uri):
+        print(websocket.extra_headers)
         await self.register(websocket)  # add the client to the list of clients
 
 
@@ -55,7 +57,9 @@ if __name__ == '__main__':
     # and delegates to the connection handler defined by ws_handler.
     # Once the handler completes, either normally or with an exception,
     # the server performs the closing handshake and closes the connection
-    start_server = websockets.serve(server.ws_handler, "0.0.0.0", 8000)
+    start_server = websockets.serve(server.ws_handler, "0.0.0.0", 8000, create_protocol=BasicAuthServerProtocol)
     loop = asyncio.get_event_loop()
     loop.run_until_complete(start_server)
     loop.run_forever()
+
+

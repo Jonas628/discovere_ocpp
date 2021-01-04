@@ -5,7 +5,7 @@ from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
 import time
-from electric_vehicle import ElectricVehicle
+from base64 import b64encode
 
 
 class ChargePoint(cp):
@@ -65,15 +65,18 @@ class ChargePoint(cp):
         self.status = "available"
 
 
-async def main(hostname, port, charge_point_id="CP_1"):
-    websocket_resource_url = f"ws://{hostname}:{port}"
+def basic_auth_header(charge_point_id):
+    basic_credentials = b64encode(charge_point_id.encode()).decode()
+    return 'Authorization', f'Basic {basic_credentials}'
+
+
+async def main(username, password, hostname, port, charge_point_id="CP0001"):
+    url = f"ws://{username}:{password}@{hostname}:{port}"
     # open the connection with a websocket
-    async with websockets.connect(websocket_resource_url) as websocket:
+    async with websockets.connect(url, extra_headers=[basic_auth_header(charge_point_id)]) as websocket:
         cp = ChargePoint(charge_point_id, websocket)
         # when the charge point is started it is waiting for messages
         await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats())
-        # ev = ElectricVehicle(cp)
-        # await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats(), ev.run())
 
 
 if __name__ == '__main__':
