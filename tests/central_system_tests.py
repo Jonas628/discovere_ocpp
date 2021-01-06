@@ -23,7 +23,8 @@ def run_charge_point(loop, charge_point_id, host="0.0.0.0", port=2234):
 def test_charge_point_registration():
     """
     Every charge point should register in the clients attribute of the central system.
-    If a charge point is stopped it should unregister. IDs should be unique, so registering
+    For a successful registration, the charge point must provide a username & password which must be validated by
+    the central system. If a charge point is stopped it should unregister. IDs should be unique, so registering
     two charge points with the same ID should yield an error.
     """
     host = "0.0.0.0"
