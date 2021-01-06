@@ -5,7 +5,6 @@ from ocpp.v16 import ChargePoint as cp
 from ocpp.v16 import call
 from ocpp.v16.enums import RegistrationStatus
 import time
-from base64 import b64encode
 
 
 class ChargePoint(cp):
@@ -65,15 +64,10 @@ class ChargePoint(cp):
         self.status = "available"
 
 
-def basic_auth_header(charge_point_id):
-    basic_credentials = b64encode(charge_point_id.encode()).decode()
-    return 'Authorization', f'Basic {basic_credentials}'
-
-
 async def main(username, password, hostname, port, charge_point_id="CP0001"):
     url = f"ws://{username}:{password}@{hostname}:{port}"
     # open the connection with a websocket
-    async with websockets.connect(url, extra_headers=[basic_auth_header(charge_point_id)]) as websocket:
+    async with websockets.connect(url) as websocket:
         cp = ChargePoint(charge_point_id, websocket)
         # when the charge point is started it is waiting for messages
         await asyncio.gather(cp.start(), cp.send_boot_notification(), cp.send_heartbeats())
@@ -82,5 +76,5 @@ async def main(username, password, hostname, port, charge_point_id="CP0001"):
 if __name__ == '__main__':
     # specify host and port and run forever, will raise an error if the server is not found
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(hostname="0.0.0.0", port=8000))
+    loop.run_until_complete(main(username="CP001", password="c6FK6OEKYnCh", hostname="0.0.0.0", port=8000))
     loop.run_forever()

@@ -5,7 +5,7 @@ from ocpp.routing import on
 from ocpp.v16 import ChargePoint as Cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
-from server_protocol import BasicAuthServerProtocol
+from protocol.server_protocol import BasicAuthServerProtocol
 
 
 class MyChargePoint(Cp):
@@ -46,7 +46,6 @@ class CentralSystem(object):
         await asyncio.gather(self.clients[-1].start())
 
     async def ws_handler(self, websocket, uri):
-        print(websocket.extra_headers)
         await self.register(websocket)  # add the client to the list of clients
 
 
