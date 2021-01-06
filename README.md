@@ -1,6 +1,6 @@
-# Chargesim # 
+# Python Backend # 
 
-Dieses Projekt ist eine Simulation der wesentlichen Aspekte des Lademanagements.
+Ein einfaches OCPP Backend in Python
 
 ## Installation ##
 Die Dependencies können via pip über die requirements.txt Datei
