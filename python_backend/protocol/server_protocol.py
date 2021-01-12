@@ -1,7 +1,7 @@
 import websockets
 import http
 from websockets.headers import build_authorization_basic
-from chargesim import DIR
+from python_backend import DIR
 import numpy as np
 
 AUTHORIZATIONS = np.loadtxt(DIR/"protocol"/"authorizations.txt", dtype=str, delimiter=";")
