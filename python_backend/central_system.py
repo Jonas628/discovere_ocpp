@@ -1,64 +1,60 @@
+import logging
 import asyncio
 import websockets
 from datetime import datetime
 from ocpp.routing import on
-from ocpp.v16 import ChargePoint as Cp
+from ocpp.v16 import ChargePoint as cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
-from protocol.server_protocol import BasicAuthServerProtocol
+logging.basicConfig(filename='central_system.log', level=logging.DEBUG)
 
 
-class MyChargePoint(Cp):
-    """
-    Make an instance of this everytime a charge_point is connected.
-    """
+class ChargePoint(cp):
     @on(Action.BootNotification)
     def on_boot_notification(self, charge_point_vendor, charge_point_model, **kwargs):
-        print("ChargePoint Connected!")
+        logging.info(f"Boot notification from charge point model {charge_point_model} "
+                     f"from vendor {charge_point_vendor}.")
+        # logging.debug(**kwargs)
         return call_result.BootNotificationPayload(
-            current_time=str(datetime.utcnow()),
+            current_time=datetime.utcnow().isoformat(),
             interval=10,
-            status=RegistrationStatus.accepted)
+            status=RegistrationStatus.accepted
+        )
 
     @on(Action.Heartbeat)
     async def on_heartbeat(self):
-        return call_result.HeartbeatPayload(current_time=str(datetime.utcnow()))
+        current_time = str(datetime.utcnow())
+        logging.info(f"received heartbeat at {current_time}")
+        print("bing")
+        return call_result.HeartbeatPayload(current_time=current_time)
 
     @on(Action.MeterValues)
     async def on_meter_value(self, connector_id, transaction_id, meter_value):
         print(meter_value)
-        # svc.write_meter_value(meter_value[0])
         return call_result.MeterValuesPayload()
 
 
-class CentralSystem(object):
+async def on_connect(websocket, path):
+    """ For every new charge point that connects, create a ChargePoint instance
+    and start listening for messages.
 
-    def __init__(self):
-        self.clients = []  # all currently connected charging_points
+    """
+    charge_point_id = path.strip('/')
+    cp = ChargePoint(charge_point_id, websocket)
 
-    async def register(self, websocket):
-        charge_point_nr = len(self.clients)
-        if charge_point_nr < 10:
-            charge_point_id = f"CP0{charge_point_nr}"
-        else:
-            charge_point_id = f"CP{charge_point_nr}"
-        self.clients.append(MyChargePoint(charge_point_id, websocket))
-        await asyncio.gather(self.clients[-1].start())
+    await cp.start()
 
-    async def ws_handler(self, websocket, uri):
-        await self.register(websocket)  # add the client to the list of clients
+
+async def main():
+    server = await websockets.serve(
+        on_connect,
+        '0.0.0.0',
+        9001,
+        subprotocols=['ocpp1.6']
+    )
+
+    await server.wait_closed()
 
 
 if __name__ == '__main__':
-    server = CentralSystem()
-    # Whenever a client connects, the server accepts the connection,
-    # creates a WebSocketServerProtocol, performs the opening handshake,
-    # and delegates to the connection handler defined by ws_handler.
-    # Once the handler completes, either normally or with an exception,
-    # the server performs the closing handshake and closes the connection
-    start_server = websockets.serve(server.ws_handler, "0.0.0.0", 8000, create_protocol=BasicAuthServerProtocol)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(start_server)
-    loop.run_forever()
-
-
+    asyncio.run(main())

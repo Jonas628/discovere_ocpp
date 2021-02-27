@@ -1,40 +1,15 @@
-# Python Backend # 
+A simple OCPP backend which can run in a docker container.
 
-Ein einfaches OCPP Backend in Python
+# build a docker image
+go to the root folder of the repository and type (giving a name with the -t flag is optional):
+`sudo docker build -t ocpp-cs .`
 
-## Installation ##
-Die Dependencies können via pip über die requirements.txt Datei
-installiert werden: \
-`pip install -r requirements.txt`
+# run the container
+use the -d flag to detach the container from the console (optional), and the -p flag to publish the port 8000 inside 
+the container to port 8000 outside the container:
+`sudo docker run -d -p 8000:8000 ocpp-cs`
 
-## 1. Kommunikation zwischen CS und CP ##
-g
-Der einfachste Fall eines Ladesystems besteht aus einem Central System (CS) und einem
-Charging Point (CP).
-
-Das CS wird über die Konsole gestartet, hostet dann lokalen websocket server und wartet darauf,
-dann sich ein CP verbindet:
-
-input:\
-`python central_system.py`\
-output:\
-`### starting the central system ###`
-
-Der CP wird in einem neuen Thread gestartet, verbindet sich mit dem CS,
-sendet eine Boot-Notification und dann in regelmäßigen Intervallen
-Heartbeats. Diese werden vom CS angezeigt:
-
-input:\
-`python charging_point.py`\
-output:\
-`ChargePoint Connected!`\
-`Connected to central system.`
-
-## 2. Laden eines Fahrzeugs ##
-
-## 3. Lastmanagement ##
-
-## 4. Lademanagement ##
+# reading logs
 
 
 
