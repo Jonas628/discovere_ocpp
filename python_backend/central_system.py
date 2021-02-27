@@ -49,7 +49,7 @@ async def main():
     server = await websockets.serve(
         on_connect,
         '0.0.0.0',
-        9001,
+        8000,
         subprotocols=['ocpp1.6']
     )
 
