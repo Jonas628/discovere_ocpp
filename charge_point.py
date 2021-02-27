@@ -22,7 +22,7 @@ class ChargePoint(cp):
         while True:
             request = call.HeartbeatPayload()
             await self.call(request)
-            await asyncio.sleep(10)
+            await asyncio.sleep(1)
 
     async def send_meter_value(self, cid=1, tid=1):
         request = call.MeterValuesPayload(
@@ -55,7 +55,7 @@ class ChargePoint(cp):
 
 async def main():
     async with websockets.connect(
-        'ws://localhost:9001/CP_1',
+        'ws://localhost:8000/CP_1',
          subprotocols=['ocpp1.6']
     ) as ws:
 
