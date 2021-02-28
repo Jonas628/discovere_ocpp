@@ -14,6 +14,7 @@ run the skript to connect a charge point to the central system which starts send
 `python charge_point.py`
 
 # reading logs locally
+Docker has a logging mechanism that writes everything printed to the console to a log file.
 get the path to the log file:
 `sudo docker inspect central-system | grep LogPath`
 
@@ -22,5 +23,19 @@ use the commandline to register on ECS:
 `sudo -i`
 `aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 203535000826.dkr.ecr.eu-west-1.amazonaws.com`
 tag the image for uploading it to a ECS repository (assuming the repo is called "ocpp-central-system"):
-`sudo docker tag ocpp-cs:latest 203535000826.dkr.ecr.eu-west-1.amazonaws.com/ocpp-central-system:latest`
+`docker tag ocpp-cs:latest 203535000826.dkr.ecr.eu-west-1.amazonaws.com/ocpp-central-system:latest`
+push the image onto the repository:
+`docker push 203535000826.dkr.ecr.eu-west-1.amazonaws.com/ocpp-central-system:latest`
+
+# get logs from the container
+find the instance with
+`aws wc2 describe-instances`
+and find the instance id and public DNS, e.g.
+ID: i-03cb6e15c45ebdc0f
+DNS: ec2-18-202-56-229.eu-west-1.compute.amazonaws.com
+For Linux, default user is: ec2-user
+
+connect to the EC2 instance with ssh:
+`ssh -i /home/ole/.config/mysshkey.pem ec2-user@ec2-18-202-56-229.eu-west-1.compute.amazonaws.com`
+
 

@@ -6,6 +6,8 @@ from ocpp.v16 import ChargePoint as cp
 from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
 
+transaction_id = 0
+
 
 class ChargePoint(cp):
     @on(Action.BootNotification)
@@ -18,11 +20,36 @@ class ChargePoint(cp):
             status=RegistrationStatus.accepted
         )
 
+    @on(Action.StatusNotification)
+    async def on_status_notification(self, connector_id, error_code, status, **kwargs):
+        print("received status notification. \n"
+              f"connector_id: {connector_id} \n"
+              f"error_code: {error_code} \n"
+              f"status: {status}")
+        return call_result.StatusNotificationPayload()
+
     @on(Action.Heartbeat)
     async def on_heartbeat(self):
         current_time = str(datetime.utcnow())
         print(f"received heartbeat at {current_time}")
         return call_result.HeartbeatPayload(current_time=current_time)
+
+    @on(Action.StartTransaction)
+    async def on_start_transaction(self, connector_id, id_tag, meter_start, timestamp):
+        global transaction_id
+        print(f"received start transaction request at {timestamp}. \n"
+              f"connector_id: {connector_id} \n"
+              f"id_tag: {id_tag} \n"
+              f"meter_start: {meter_start}")
+        transaction_id += 1  # count all transactions
+        return call_result.StartTransactionPayload(transaction_id=transaction_id, id_tag_info={})
+
+    @on(Action.StopTransaction)
+    async def on_stop_transaction(self, meter_stop, timestamp, transaction_id):
+        print(f"received start transaction request at {timestamp}. \n"
+              f"transaction_id: {transaction_id} \n"
+              f"meter_stop: {meter_stop}")
+        return call_result.StopTransactionPayload()
 
     @on(Action.MeterValues)
     async def on_meter_value(self, connector_id, transaction_id, meter_value):
