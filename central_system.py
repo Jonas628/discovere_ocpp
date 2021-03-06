@@ -42,11 +42,11 @@ class ChargePoint(cp):
               f"id_tag: {id_tag} \n"
               f"meter_start: {meter_start}")
         transaction_id += 1  # count all transactions
-        return call_result.StartTransactionPayload(transaction_id=transaction_id, id_tag_info={})
+        return call_result.StartTransactionPayload(transaction_id=transaction_id, id_tag_info={"status": "Accepted"})
 
     @on(Action.StopTransaction)
     async def on_stop_transaction(self, meter_stop, timestamp, transaction_id):
-        print(f"received start transaction request at {timestamp}. \n"
+        print(f"received stop transaction request at {timestamp}. \n"
               f"transaction_id: {transaction_id} \n"
               f"meter_stop: {meter_stop}")
         return call_result.StopTransactionPayload()

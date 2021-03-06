@@ -38,4 +38,5 @@ For Linux, default user is: ec2-user
 connect to the EC2 instance with ssh:
 `ssh -i /home/ole/.config/mysshkey.pem ec2-user@ec2-18-202-56-229.eu-west-1.compute.amazonaws.com`
 
-
+now we can get the location of the log file with:
+`sudo docker inspect central-system | grep LogPath`

@@ -1,7 +1,6 @@
 import asyncio
 import websockets
 from datetime import datetime
-import time
 from ocpp.v16 import call, ChargePoint as cp
 from ocpp.v16.enums import RegistrationStatus, ChargePointStatus, ChargePointErrorCode
 
@@ -26,6 +25,7 @@ class ChargePoint(cp):
         await self.call(request)
 
     async def send_heartbeats(self):
+        await asyncio.sleep(10)
         while True:
             await asyncio.sleep(10)
             request = call.HeartbeatPayload()
@@ -67,7 +67,15 @@ class ChargePoint(cp):
         await self.call(request)
 
     async def do_transaction(self):
-        pass
+        """
+        send a start transaction, two meter values and a stop transaction
+        """
+        await asyncio.sleep(5)
+        await self.start_transaction()
+        await asyncio.sleep(1)
+        # await self.send_meter_value()
+        await asyncio.sleep(1)
+        await self.stop_transaction()
 
 async def main():
     #async with websockets.connect(
@@ -85,7 +93,8 @@ async def main():
         await asyncio.gather(cp.start(),
                              cp.send_boot_notification(),
                              cp.send_status_notification(),
-                             cp.send_heartbeats())
+                             cp.send_heartbeats(),
+                             cp.do_transaction())
 
 
 if __name__ == '__main__':
