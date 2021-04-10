@@ -44,7 +44,7 @@ To access the log of the container it is required to connect to the instance
 using shh. The ssh command needs the path to the locally stored private key,
 and the public DNS of the aws instance: \
 `ssh -i /home/ole/.config/mysshkey.pem ec2-user@ec2-18-202-56-229.eu-west-1.compute.amazonaws.com`
-
+va
 ### Step 9: get the log:
 find the name of the running container: \
 `sudo docker ps` \

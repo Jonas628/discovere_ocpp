@@ -9,9 +9,9 @@ from ocpp.v16 import call_result
 transaction_id = 0
 
 
-class ChargePoint(cp):
+class ChargePoint(cp):  # digital twin
     @on(Action.BootNotification)
-    def on_boot_notification(self, charge_point_vendor, charge_point_model, **kwargs):
+    async def on_boot_notification(self, charge_point_vendor, charge_point_model, **kwargs):
         print(f"Boot notification from charge point model {charge_point_model} "
               f"from vendor {charge_point_vendor}.")
         return call_result.BootNotificationPayload(
