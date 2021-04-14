@@ -22,6 +22,7 @@ Note that the host name in the websocket must be "localhost" or "0.0.0.0"
 `sudo -i`
 `aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 203535000826.dkr.ecr.eu-west-1.amazonaws.com`
 This should return "Login Succeeded"
+NOTE: the aws cli must be configured before
 
 ### Step 5: tag and push the docker image to aws:
 tag the image for uploading it to a ECS repository (assuming the repo is called "ocpp-central-system"): \
