@@ -9,7 +9,7 @@ from ocpp.v16.enums import Action, RegistrationStatus
 from ocpp.v16 import call_result
 
 p = Path().resolve()
-logging.basicConfig(filename=str(p/'log'/'debug.log'), level=logging.INFO, forcr=True,
+logging.basicConfig(filename=str(p/'log'/'debug.log'), level=logging.INFO, force=True,
                     format='# %(levelname)s # %(asctime)s: %(message)s')
 
 transaction_id = 0
