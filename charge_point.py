@@ -49,8 +49,7 @@ class ChargePoint(cp):
             timestamp=str(datetime.utcnow()),
             transaction_id=1,  # is this the same as `id_tag` in `start_transaction()`?
         )
-        response = await self.call(request)
-        #print('Stop TransactionId Satus: {0}'.format(response.id_tag_info["status"]))
+        await self.call(request)
 
     async def send_meter_value(self, cid=1, tid=1):
         request = call.MeterValuesPayload(
@@ -68,15 +67,13 @@ class ChargePoint(cp):
                      "unit": "kWh",
                      "value": "0.00"}]}]
         )
-        print('sent MeterValue')
-        response = await self.call(request)
-        print (response)
+        await self.call(request)
 
     async def do_transaction(self):
         """
         send a start transaction, two meter values and a stop transaction
         """
-        # await asyncio.sleep(5)
+        await asyncio.sleep(5)
         await self.start_transaction()
         await asyncio.sleep(1)
         await self.send_meter_value()
@@ -95,7 +92,6 @@ async def main():
     ) as ws:
 
         cp = ChargePoint('CP_1', ws)
-
 
         await asyncio.gather(cp.start(),
                              cp.send_boot_notification(),
