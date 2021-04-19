@@ -3,15 +3,27 @@ import websockets
 from datetime import datetime
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as cp
-from ocpp.v16.enums import Action, RegistrationStatus
-from ocpp.v16 import call_result
+from ocpp.v16.enums import Action, RegistrationStatus, AuthorizationStatus, AvailabilityType
+from ocpp.v16 import call_result, call
+
+# import all sub-modules
 
 transaction_id = 0
+
+id_tags = {"0123456789ABCDEF1234":
+               {"expiry_date": datetime(2021, 4, 15, 23, 59, 59, 999999),
+                "parent_id_tag": "AABBCCDDEEFF12345678",
+                "status": AuthorizationStatus.accepted},
+           "1123456789ABCDEF1234":
+               {"expiry_date": datetime(2021, 4, 20, 23, 59, 59, 999999),
+                "parent_id_tag": "AABBCCDDEEFF12345678",
+                "status": AuthorizationStatus.accepted},
+           }
 
 
 class ChargePoint(cp):
     @on(Action.BootNotification)
-    def on_boot_notification(self, charge_point_vendor, charge_point_model, **kwargs):
+    async def on_boot_notification(self, charge_point_vendor, charge_point_model, **kwargs):
         print(f"Boot notification from charge point model {charge_point_model} "
               f"from vendor {charge_point_vendor}.")
         return call_result.BootNotificationPayload(
@@ -55,6 +67,67 @@ class ChargePoint(cp):
     async def on_meter_value(self, connector_id, transaction_id, meter_value):
         print(meter_value)
         return call_result.MeterValuesPayload()
+
+    def post_id_tag(self, id_tag, id_tag_info):
+        id_tags [id_tag] = id_tag_info
+
+    @on(Action.Authorize)
+    async def on_authorize(self, id_tag):
+        # ToDo: implement DB-connection for id_tags, id_tag_info
+        # better using a dictionary or a list of objects?
+        # primary-key = idTag; attributes : expiryDate, parentIdTag, status
+
+
+        print(id_tag)
+        _id_tag_info = {"expiry_date": str(datetime(2021, 4, 15, 23, 59, 59, 999999)),
+                        "parent_id_tag": "AABBCCDDEEFF12345678",
+                        "status": AuthorizationStatus.expired}
+
+        # invalid: Identifier is unknown. Not allowed for charging.
+        authorization_status = AuthorizationStatus.invalid
+
+        if id_tag in id_tags:
+            _id_tag_info = id_tags[id_tag]
+
+            # blocked: Identifier has been blocked. Not allowed for charging.
+            if _id_tag_info["status"] == AuthorizationStatus.blocked:
+                authorization_status = AuthorizationStatus.blocked
+
+            # concurrent_tx: Identifier is already involved in another transaction and multiple transactions
+            # are not allowed. (Only relevant for a StartTransaction.req.)
+            elif _id_tag_info["status"] == AuthorizationStatus.concurrent_tx:
+                authorization_status = AuthorizationStatus.concurrent_tx
+
+            else:
+                # accepted: Identifier is allowed for charging.
+                if _id_tag_info["expiry_date"] > datetime.utcnow():
+                    authorization_status = AuthorizationStatus.accepted
+
+                # expired: Identifier has expired. Not allowed for charging.
+                else:
+                    authorization_status = AuthorizationStatus.expired
+
+        _id_tag_info["status"] = authorization_status
+        _id_tag_info["expiry_date"] = str(_id_tag_info["expiry_date"])
+        return call_result.AuthorizePayload(id_tag_info=_id_tag_info)
+
+
+    # @on(Action.ChangeAvailability)
+    async def change_availability(self, connector_id, availability_type):
+        # ToDo for ConnectorId = 0 the change applies to all connectors --> implement structur
+        cps = {"CP01":
+                    {"1": AvailabilityType.operative},
+               "CP02":
+                    {"1": AvailabilityType.inoperative}}
+
+        # comparing availability_type with current availability_type
+        if cps[self.id][connector_id].value != availability_type:
+            call.ChangeAvailabilityPayload(connector_id=connector_id, type=availability_type)
+            # async await
+
+            # Inoperative: Charge point is not available for charging.
+
+            # Operative: Charge point is available for charging.
 
 
 async def on_connect(websocket, path):
