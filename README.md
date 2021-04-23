@@ -53,3 +53,14 @@ get the location of the log file: \
 `sudo docker inspect *container_name* | grep LogPath`
 open the log file in the console:
 `sudo cat *path_to_log*`
+
+
+# Access
+## Django superuser
+superuser: technical.support
+
+password: @CentralSystem
+
+## Elephant PostgreSQL DB
+technical.support@discovere.de
+@CentralSystem

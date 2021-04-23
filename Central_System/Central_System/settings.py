@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-f$n491i!8#)-p8flw_i(yv6n3f13tn5cxi&+9)e1hf5bwp0#c#'
+SECRET_KEY = 'django-insecure-3y+l$f2&g--!l8+te56lqfsayabymy$p!l483s_y(c#kl&w!yt'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Charge_Point'
 ]
 
 MIDDLEWARE = [
@@ -75,11 +76,27 @@ WSGI_APPLICATION = 'Central_System.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ohcboels',
+        'USER': 'ohcboels',
+        'PASSWORD': 'Q9NRfjXqQ4NuUcgJqAKliYQyVFU85k5q',
+        'HOST': 'queenie.db.elephantsql.com',
+        'PORT': '5432'
     }
 }
+# https://api.elephantsql.com/console/6b1f0e65-bfa7-4f0c-a218-d3fd9cdfa71a/details
 
+"""
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ohcboels',
+        'USER': 'ohcboels',
+        'PASSWORD': 'Q9NRfjXqQ4NuUcgJqAKliYQyVFU85k5q',
+        'HOST': 'queenie.db.elephantsql.com',
+        'PORT': '5432'
+        
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
