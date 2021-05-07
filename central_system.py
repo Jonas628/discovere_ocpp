@@ -1,5 +1,5 @@
 import asyncio
-import websockets
+import websockets # change to Django Websocket package
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -46,6 +46,7 @@ class ChargePoint(cp):  # digital twin
                      f"status: {status}")
         return call_result.StatusNotificationPayload()
 
+
     @on(Action.Heartbeat)
     async def on_heartbeat(self):
         current_time = str(datetime.utcnow())
@@ -76,6 +77,7 @@ class ChargePoint(cp):  # digital twin
 
     def post_id_tag(self, id_tag, id_tag_info):
         id_tags [id_tag] = id_tag_info
+
 
     @on(Action.Authorize)
     async def on_authorize(self, id_tag):
@@ -118,7 +120,7 @@ class ChargePoint(cp):  # digital twin
         return call_result.AuthorizePayload(id_tag_info=_id_tag_info)
 
 
-    # @on(Action.ChangeAvailability)
+    @on(Action.ChangeAvailability)
     async def change_availability(self, connector_id, availability_type):
         # ToDo for ConnectorId = 0 the change applies to all connectors --> implement structur
         cps = {"CP01":
@@ -154,7 +156,6 @@ async def main():
         8000,
         subprotocols=['ocpp1.6']
     )
-
     await server.wait_closed()
 
 

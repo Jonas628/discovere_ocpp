@@ -81,24 +81,28 @@ class ChargePoint(cp):
         await self.stop_transaction()
 
 async def main():
-    #async with websockets.connect(
-    #    'ws://ec2-18-202-56-229.eu-west-1.compute.amazonaws.com:8000/CP_1',
-    #     subprotocols=['ocpp1.6']
-    #) as ws:
-
     async with websockets.connect(
-        'ws://localhost:8000/CP_1',
+        'ws://localhost:8000/CP_1/',
          subprotocols=['ocpp1.6']
     ) as ws:
 
         cp = ChargePoint('CP_1', ws)
 
         await asyncio.gather(cp.start(),
-                             cp.send_boot_notification(),
-                             cp.send_status_notification(),
-                             cp.send_heartbeats(),
-                             cp.do_transaction())
-
+                             cp.send_boot_notification())
 
 if __name__ == '__main__':
     asyncio.run(main())
+
+"""
+    #async with websockets.connect(
+    #    'ws://ec2-18-202-56-229.eu-west-1.compute.amazonaws.com:8000/CP_1',
+    #     subprotocols=['ocpp1.6']
+    #) as ws:
+"""
+
+"""
+                     cp.send_status_notification(),
+                     cp.send_heartbeats(),
+                     cp.do_transaction())
+"""
