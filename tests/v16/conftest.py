@@ -1,7 +1,7 @@
 import pytest
-from ocpp.messages import Call
-from ocpp.v16 import ChargePoint
-from ocpp.v16.enums import Action
+from ocpp_d.messages import Call
+from ocpp_d.v16 import ChargePoint
+from ocpp_d.v16.enums import Action
 
 
 @pytest.fixture

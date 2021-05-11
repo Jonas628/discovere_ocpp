@@ -1,7 +1,7 @@
 import pytest
-from ocpp.v20 import ChargePoint as cp
-from ocpp.routing import on, create_route_map
-from ocpp.v16.enums import Action
+from ocpp_d.v20 import ChargePoint as cp
+from ocpp_d.routing import on, create_route_map
+from ocpp_d.v16.enums import Action
 
 
 def test_getters_should_not_be_called_during_routemap_setup():

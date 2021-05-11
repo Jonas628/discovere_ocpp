@@ -3,11 +3,11 @@ import pytest
 import asyncio
 from unittest import mock
 
-from ocpp.exceptions import NotImplementedError, ValidationError, GenericError
-from ocpp.messages import CallError
-from ocpp.routing import on, after, create_route_map
-from ocpp.v16.enums import Action
-from ocpp.v16 import call_result, call, ChargePoint
+from ocpp_d.exceptions import NotImplementedError, ValidationError, GenericError
+from ocpp_d.messages import CallError
+from ocpp_d.routing import on, after, create_route_map
+from ocpp_d.v16.enums import Action
+from ocpp_d.v16 import call_result, call, ChargePoint
 
 
 @pytest.mark.asyncio

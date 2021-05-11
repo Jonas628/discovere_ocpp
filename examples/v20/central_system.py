@@ -12,9 +12,9 @@ except ModuleNotFoundError:
     import sys
     sys.exit(1)
 
-from ocpp.routing import on
-from ocpp.v20 import ChargePoint as cp
-from ocpp.v20 import call_result
+from ocpp_d.routing import on
+from ocpp_d.v20 import ChargePoint as cp
+from ocpp_d.v20 import call_result
 
 logging.basicConfig(level=logging.INFO)
 

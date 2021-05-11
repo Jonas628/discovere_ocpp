@@ -1,6 +1,6 @@
 import pytest
-from ocpp.messages import Call
-from ocpp.v201 import ChargePoint
+from ocpp_d.messages import Call
+from ocpp_d.v201 import ChargePoint
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
-from ocpp.v16.enums import Action
-from ocpp.routing import on, after, create_route_map
+from ocpp_d.v16.enums import Action
+from ocpp_d.routing import on, after, create_route_map
 
 
 def test_create_route_map():

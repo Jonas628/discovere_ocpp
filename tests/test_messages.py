@@ -3,14 +3,14 @@ import pytest
 import decimal
 from datetime import datetime
 
-from ocpp.v16.enums import Action
-from ocpp.exceptions import (ValidationError, ProtocolError,
-                             FormatViolationError,
-                             PropertyConstraintViolationError,
-                             UnknownCallErrorCodeError)
-from ocpp.messages import (validate_payload, get_schema, _schemas,
-                           get_validator, _validators, unpack, Call, CallError,
-                           CallResult, MessageType, _DecimalEncoder)
+from ocpp_d.v16.enums import Action
+from ocpp_d.exceptions import (ValidationError, ProtocolError,
+                               FormatViolationError,
+                               PropertyConstraintViolationError,
+                               UnknownCallErrorCodeError)
+from ocpp_d.messages import (validate_payload, get_schema, _schemas,
+                             get_validator, _validators, unpack, Call, CallError,
+                             CallResult, MessageType, _DecimalEncoder)
 
 
 def test_unpack_with_invalid_json():

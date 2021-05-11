@@ -1,9 +1,9 @@
 import json
 import pytest
 
-from ocpp.exceptions import NotImplementedError
-from ocpp.routing import on, after, create_route_map
-from ocpp.v20 import call_result
+from ocpp_d.exceptions import NotImplementedError
+from ocpp_d.routing import on, after, create_route_map
+from ocpp_d.v20 import call_result
 
 
 @pytest.mark.asyncio

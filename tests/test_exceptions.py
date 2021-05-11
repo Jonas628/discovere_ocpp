@@ -1,4 +1,4 @@
-from ocpp.exceptions import ProtocolError
+from ocpp_d.exceptions import ProtocolError
 
 
 def test_exception_with_error_details():
