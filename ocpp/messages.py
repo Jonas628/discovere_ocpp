@@ -105,7 +105,7 @@ def get_schema(message_type_id, action, ocpp_version, parse_float=float):
     default it is `float()`, but certain schema's require `decimal.Decimal()`.
     """
     warnings.warn(
-        "Depricated as of 0.8.1. Please use `ocpp_d.messages.get_validator()`."
+        "Depricated as of 0.8.1. Please use `ocpp.messages.get_validator()`."
     )
 
     if ocpp_version not in ["1.6", "2.0", "2.0.1"]:

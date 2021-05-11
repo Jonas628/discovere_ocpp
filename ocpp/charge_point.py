@@ -11,7 +11,7 @@ from ocpp_d.messages import Call, validate_payload, MessageType
 from ocpp_d.exceptions import OCPPError, NotImplementedError
 from ocpp_d.messages import unpack
 
-LOGGER = logging.getLogger('ocpp_d')
+LOGGER = logging.getLogger('ocpp')
 
 
 def camel_to_snake_case(data):
