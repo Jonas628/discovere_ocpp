@@ -8,9 +8,13 @@ go to the root folder of the repository and type : \
 
 ### Step 2: run the container
 Run the container to check that it was built correctly: \
-`sudo docker run --name central-system -t -d -v $(pwd):/tmp  -w /tmp -p 8000:8000 ocpp-cs` \
+`sudo docker run --name central-system -it -d -v $(pwd):/tmp  -w /tmp -p 8000:8000 ocpp-cs` \
 use the -d flag to detach the container from the console (optional), and the -p flag to publish the port 8000 inside 
 the container to port 8000 outside the container.
+path: external-path : internal_path
+use each external-path only once
+volume: -v /directory of Docker Host:/directory inside container
+-y /opt/datadir:/var/lib/mysql mysql
 
 ### Step 3: connect a charge point locally
 To check that the script runs properly, use the charge_point.py script.
@@ -64,3 +68,21 @@ password: @CentralSystem
 ## Elephant PostgreSQL DB
 technical.support@discovere.de
 @CentralSystem
+
+
+older version of dockerfile:
+"""
+FROM python:3.7-alpine
+
+ADD central_system.py /
+
+RUN pip install asyncio websockets ocpp_d
+RUN pip install pathlib
+RUN pip install rest_framework
+RUN pip install date_time
+RUN pip install logging
+
+EXPOSE 8000
+
+CMD [ "python", "./central_system.py" ]
+"""

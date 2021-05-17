@@ -3,10 +3,10 @@ import websockets # change to Django Websocket package
 import logging
 from pathlib import Path
 from datetime import datetime
-from ocpp.routing import on
-from ocpp.v16 import ChargePoint as cp
-from ocpp.v16.enums import Action, RegistrationStatus, AuthorizationStatus, AvailabilityType
-from ocpp.v16 import call_result, call
+from ocpp_d.routing import on
+from ocpp_d.v16 import ChargePoint as cp
+from ocpp_d.v16.enums import Action, RegistrationStatus, AuthorizationStatus, AvailabilityType
+from ocpp_d.v16 import call_result, call
 
 # import all sub-modules
 

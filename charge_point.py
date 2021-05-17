@@ -1,12 +1,15 @@
 import asyncio
 import websockets
 from datetime import datetime
-from ocpp.v16 import call, ChargePoint as cp
-from ocpp.v16.enums import RegistrationStatus, ChargePointStatus, ChargePointErrorCode
+
+from ocpp_d.routing import on
+from ocpp_d.v16 import call, ChargePoint as cp, call_result
+from ocpp_d.v16.enums import RegistrationStatus, ChargePointStatus, ChargePointErrorCode, Action, ResetStatus
 
 
-class ChargePoint(cp):
+class TestChargePoint(cp):
     async def send_boot_notification(self):
+        print("Boot-Notification")
         request = call.BootNotificationPayload(
             charge_point_model="Optimus",
             charge_point_vendor="The Mobility House"
@@ -26,12 +29,20 @@ class ChargePoint(cp):
         print(response)
 
     async def send_heartbeats(self):
-        await asyncio.sleep(10)
         while True:
             await asyncio.sleep(10)
             request = call.HeartbeatPayload()
             response = await self.call(request)
             print(response.current_time)
+
+    async def send_authorize(self):
+        request = call.AuthorizePayload(
+            id_tag="0123456789ABCDEF1234"
+            #id_tag="0000AAAA0000AAAA"
+        )
+        response = await self.call(request)
+        print('Tried to authorize, got: {0}'.format(response.id_tag_info['status']))
+        #print('Tried to authorize, got: {0}'.format(response.id_tag_info["status"]))
 
     async def start_transaction(self):
         request = call.StartTransactionPayload(
@@ -80,16 +91,33 @@ class ChargePoint(cp):
         await asyncio.sleep(1)
         await self.stop_transaction()
 
+    """
+    @on(Action.ChangeAvailability)
+    async def change_availability(self, connector_id, availability_type):
+        print("Change availability for connector {0}, to {1}".format(connector_id, availability_type))
+        return 0
+
+    """
+    @on(Action.Reset)
+    async def change_availability(self, type):
+        print("Reset!!! Typ: {0}".format(type))
+        response = call_result.ResetPayload(status=ResetStatus.accepted)
+        print(response)
+        return response
+    #"""
+
 async def main():
     async with websockets.connect(
         'ws://localhost:8000/CP_1/',
          subprotocols=['ocpp1.6']
     ) as ws:
 
-        cp = ChargePoint('CP_1', ws)
+        cp = TestChargePoint('10002', ws)
 
         await asyncio.gather(cp.start(),
-                             cp.send_boot_notification())
+                             cp.send_boot_notification(),
+                             #cp.send_heartbeats(),
+                             cp.send_authorize())
 
 if __name__ == '__main__':
     asyncio.run(main())

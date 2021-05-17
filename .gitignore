@@ -1,6 +1,8 @@
 /log/
 *__pycache__*
 testfile.py
+test.py
 /env
 /venv
+db.sqlite3
 /.idea/

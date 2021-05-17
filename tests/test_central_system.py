@@ -1,8 +1,8 @@
 import asyncio
 import websockets
 from datetime import datetime
-from ocpp.v16 import call, ChargePoint as cp
-from ocpp.v16.enums import RegistrationStatus, ChargePointStatus, ChargePointErrorCode
+from ocpp_d.v16 import call, ChargePoint as cp
+from ocpp_d.v16.enums import RegistrationStatus, ChargePointStatus, ChargePointErrorCode
 
 
 ### This script provides tests to proof the Central System (CS)

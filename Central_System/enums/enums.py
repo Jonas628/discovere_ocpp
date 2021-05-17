@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from ocpp_d.v16.enums import AuthorizationStatus
 
 """
 the foreign key must be part of the object B if relationship A - B = 1 : N
@@ -27,3 +28,17 @@ class BackendProtocol(models.TextChoices):
     OCPP16_J = 'OCPP16_J', _('OCPP_1.6_JSON')
     OCPP20_J = 'OCPP20_J', _('OCPP_2.0_JSON')
     OCPP201_J = 'OCPP201_J', _('OCPP_2.0.1_JSON')
+
+
+"""
+class AuthorizationStatus(models.TextChoices):
+    ACCEPTED = 'ACCAPTED', _('accapted')
+    BLOCKED = 'BLOCKED', _('blocked')
+    CONCURRENT = 'CONCURRENT', _('concurrent_tx')
+    EXPIRED = 'EXPIRED', _('expired')
+    INVALID = 'INVALID', _('invalid')
+"""
+
+
+
+

@@ -18,7 +18,6 @@ from channels.auth import AuthMiddlewareStack
 import cp_handler.routing
 
 
-
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Central_System.settings')
 
 application = ProtocolTypeRouter({
@@ -29,5 +28,3 @@ application = ProtocolTypeRouter({
             cp_handler.routing.ws_urlpatterns
         ))
 })
-
-

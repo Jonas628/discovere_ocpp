@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'user'
 ]
 
+
+REST_FRAMEWORK = {
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+    # now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S') + "Z"
+}
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -82,12 +89,8 @@ ASGI_APPLICATION = 'Central_System.asgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ohcboels',
-        'USER': 'ohcboels',
-        'PASSWORD': 'Q9NRfjXqQ4NuUcgJqAKliYQyVFU85k5q',
-        'HOST': 'queenie.db.elephantsql.com',
-        'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 # https://api.elephantsql.com/console/6b1f0e65-bfa7-4f0c-a218-d3fd9cdfa71a/details
