@@ -37,8 +37,8 @@ class TestChargePoint(cp):
 
     async def send_authorize(self):
         request = call.AuthorizePayload(
-            id_tag="0123456789ABCDEF1234"
-            #id_tag="0000AAAA0000AAAA"
+            #id_tag="0123456789ABCDEF1234"
+            id_tag="0000AAAA0000AAAA"
         )
         response = await self.call(request)
         print('Tried to authorize, got: {0}'.format(response.id_tag_info['status']))
